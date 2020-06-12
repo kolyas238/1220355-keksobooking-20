@@ -12,8 +12,8 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var PIN_WIDTH = 40;
-var PIN_HEIGHT = 60;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
 
 // случайное число
 var getRandomNumber = function (min, max) {
@@ -77,20 +77,23 @@ var generateAds = function (quantity) {
 };
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+
+var activateMap = function () {
+  map.classList.remove('map--faded');
+};
+
+activateMap();
 
 // отрисовка меток на карте
 
-var mapPins = document.querySelector('.map__pins');
-var pinTemplate = document.querySelector('#pin')
-.content
-.querySelector('.map__pin');
-
 var renderPin = function (adPin) {
+  var pinTemplate = document.querySelector('#pin')
+  .content
+  .querySelector('.map__pin');
   var pinItem = pinTemplate.cloneNode(true);
 
   pinItem.style.left = (adPin.location.x - PIN_WIDTH / 2) + 'px';
-  pinItem.style.top = (adPin.location.y + PIN_HEIGHT) + 'px';
+  pinItem.style.top = (adPin.location.y - PIN_HEIGHT) + 'px';
   pinItem.querySelector('img').src = adPin.author.avatar;
   pinItem.querySelector('img').alt = adPin.offer.title;
 
@@ -98,12 +101,14 @@ var renderPin = function (adPin) {
 };
 
 var placeAds = function (ads) {
+  var mapPins = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < ads.length; i++) {
-    fragment.appendChild(renderPin(ads[i]));
-  }
+  ads.forEach(function (ad) {
+    fragment.appendChild(renderPin(ad));
+  });
   mapPins.appendChild(fragment);
 };
 
-map.appendChild(placeAds(generateAds(ADS_QUANTITY)));
+var generatedAds = generateAds(ADS_QUANTITY);
+map.appendChild(placeAds(generatedAds));
