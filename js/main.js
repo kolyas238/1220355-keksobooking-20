@@ -15,6 +15,8 @@ var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 
+var map = document.querySelector('.map');
+
 // случайное число
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -76,13 +78,9 @@ var generateAds = function (quantity) {
   return ads;
 };
 
-var map = document.querySelector('.map');
-
 var activateMap = function () {
   map.classList.remove('map--faded');
 };
-
-activateMap();
 
 // отрисовка меток на карте
 
@@ -112,3 +110,5 @@ var placeAds = function (ads) {
 
 var generatedAds = generateAds(ADS_QUANTITY);
 map.appendChild(placeAds(generatedAds));
+
+activateMap();
