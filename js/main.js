@@ -39,7 +39,7 @@ var shuffleArray = function (items) {
   var clonedItems = items.slice();
   var length = items.length;
   for (var i = 0; i < length; i++) {
-    var j = getRandomNumber(0, length);
+    var j = getRandomNumber(0, length - 1);
     var temp = clonedItems[i];
     clonedItems[i] = clonedItems[j];
     clonedItems[j] = temp;
@@ -119,76 +119,71 @@ var placeAds = function (ads) {
   mapPins.appendChild(fragment);
 };
 
-var generatedAds = generateAds(ADS_QUANTITY);
-// map.appendChild(placeAds(generatedAds));
-placeAds(generatedAds);
-
 // отрисовка карточек
 
-var cardTemplate = document.querySelector('#card')
-.content
-.querySelector('.map__card');
-
-var renderFeatures = function (element, features) {
-  element.innerHTML = '';
-  for (var i = 0; i < features.length; i++) {
-    var feature = document.createElement('li');
-    feature.classList.add('popup__feature');
-    feature.classList.add('popup__feature--' + features[i]);
-    element.appendChild(feature);
-  }
+var renderFeatures = function (container, features) {
+  container.innerHTML = '';
+  var fragment = document.createDocumentFragment();
+  features.forEach(function (feature) {
+    var cardFeature = document.createElement('li');
+    fragment.appendChild(cardFeature);
+    cardFeature.classList.add('popup__feature', 'popup__feature--' + feature);
+  });
+  container.appendChild(fragment);
 };
 
 var renderPhotos = function (container, photos) {
   container.innerHTML = '';
-
-  for (var i = 0; i < photos.length; i++) {
+  var fragment = document.createDocumentFragment();
+  photos.forEach(function (photo) {
     var photoItem = document.createElement('img');
+    fragment.appendChild(photoItem);
     photoItem.classList.add('popup__photo');
-    photoItem.src = photos[i];
+    photoItem.src = photo;
     photoItem.width = PHOTO_WIDTH;
     photoItem.height = PHOTO_HEIGHT;
     photoItem.alt = PHOTO_ALT;
     container.appendChild(photoItem);
-  }
+  });
 };
 
 var switchRooms = function (rooms) {
-  var str = '';
 
   switch (rooms) {
     case 1:
-      str = '1 комната';
-      break;
+      return rooms + ' комната';
 
+    case 2:
+    case 3:
+    case 4:
+      return rooms + ' комнаты';
     case 100:
-      str = ' 100 комнат';
-      break;
-
+      return rooms + 'комнат';
     default:
-      str = rooms + ' комнаты';
+      return rooms + ' комнат';
   }
-  return str;
 };
 
 var switchGuests = function (guests) {
-  var str = '';
 
   switch (guests) {
-    case 0:
-      break;
+    case 100:
+      return 'не для гостей';
 
     case 1:
-      str = ' для 1 гостя';
-      break;
+      return ' для ' + guests + ' гостя';
 
     default:
-      str = ' для ' + guests + ' гостей';
+      return ' для ' + guests + ' гостей';
   }
-  return str;
 };
 
 var renderCard = function (ad) {
+  var cardTemplate = document.querySelector('#card')
+  .content
+  .querySelector('.map__card');
+  var mapFilters = document.querySelector('.map__filters-container');
+
   var cardItems = cardTemplate.cloneNode(true);
   var cardFeatures = cardItems.querySelector('.popup__features');
   var cardPhotos = cardItems.querySelector('.popup__photos');
@@ -209,13 +204,13 @@ var renderCard = function (ad) {
     cardItems.querySelector('.popup__type').classList.add('visually-hidden');
   }
 
-  if (ad.offer.rooms || ad.offer.guests) {
+  if (ad.offer.rooms && ad.offer.guests) {
     cardItems.querySelector('.popup__text--capacity').textContent = switchRooms(ad.offer.rooms) + switchGuests(ad.offer.guests);
   } else {
     cardItems.querySelector('.popup__text--capacity').classList.add('visually-hidden');
   }
 
-  if (ad.offer.checkin || ad.offer.checkout) {
+  if (ad.offer.checkin && ad.offer.checkout) {
     cardItems.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   } else {
     cardItems.querySelector('.popup__text--time').classList.add('visually-hidden');
@@ -239,11 +234,12 @@ var renderCard = function (ad) {
     cardItems.querySelector('.popup__avatar').classList.add('visually-hidden');
   }
 
-  return cardItems;
+  // return cardItems;
+  map.insertBefore(cardItems, mapFilters);
 };
 
-var mapFilters = document.querySelector('.map__filters-container');
-
-map.insertBefore(renderCard(generatedAds[0]), mapFilters);
+var generatedAds = generateAds(ADS_QUANTITY);
+placeAds(generatedAds);
 
 activateMap();
+renderCard(generatedAds[0]);
