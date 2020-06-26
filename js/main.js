@@ -284,8 +284,6 @@ var fieldsetsDisable = function (fieldsets) {
   });
 };
 
-fieldsetsDisable(formFieldsets);
-
 var fieldsetsEnable = function (fieldsets) {
   fieldsets.forEach(function (fieldset) {
     fieldset.removeAttribute('disabled', 'disabled');
@@ -304,8 +302,8 @@ var enableService = function () {
   fieldsetsEnable(formFieldsets);
   getEnabledAddress();
   placeAds(generatedAds);
-  mainPin.removeEventListener('keydown', mainPinEnterPress);
-  mainPin.removeEventListener('mousedown', mainPinMouseClick);
+  mainPin.removeEventListener('keydown', mainPinPressHandler);
+  mainPin.removeEventListener('mousedown', mainPinClickHandler);
 };
 
 var disableService = function () {
@@ -313,18 +311,18 @@ var disableService = function () {
   getDisabledAddress();
   fieldsetsDisable(formFieldsets);
   placeAds(generatedAds);
-  mainPin.addEventListener('keydown', mainPinEnterPress);
-  mainPin.addEventListener('mousedown', mainPinMouseClick);
+  mainPin.addEventListener('keydown', mainPinPressHandler);
+  mainPin.addEventListener('mousedown', mainPinClickHandler);
   deletePins();
 };
 
-var mainPinEnterPress = function (evt) {
+var mainPinPressHandler = function (evt) {
   if (evt.keyCode === ENTER_KEY) {
     enableService();
   }
 };
 
-var mainPinMouseClick = function (evt) {
+var mainPinClickHandler = function (evt) {
   if (evt.button === 0) {
     enableService();
   }
@@ -369,7 +367,5 @@ var onCapacityChange = function () {
 capacitySelect.addEventListener('change', onCapacityChange);
 roomsSelect.addEventListener('change', onCapacityChange);
 
-
-enableService();
 disableService();
 validateRooms();
