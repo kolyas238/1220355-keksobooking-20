@@ -360,12 +360,12 @@ var validateRooms = function () {
   }
 };
 
-var onCapacityChange = function () {
+var capacityChangeHandler = function () {
   validateRooms();
 };
 
-capacitySelect.addEventListener('change', onCapacityChange);
-roomsSelect.addEventListener('change', onCapacityChange);
+capacitySelect.addEventListener('change', capacityChangeHandler);
+roomsSelect.addEventListener('change', capacityChangeHandler);
 
 disableService();
 validateRooms();
